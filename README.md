@@ -7,11 +7,9 @@
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg?style=flat-square)](http://commitizen.github.io/cz-cli/)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg?style=flat-square)](https://conventionalcommits.org)
 [![License](https://img.shields.io/badge/license-UNLICENSE-green.svg?style=flat-square)](https://github.com/thierrymichel/data-locales/blob/master/UNLICENSE)
-
-<!--
 [![CircleCI](https://img.shields.io/circleci/project/github/thierrymichel/data-locales/master.svg?style=flat-square)](https://circleci.com/gh/thierrymichel/data-locales/tree/master)
 [![Coverage Status](https://img.shields.io/coveralls/github/thierrymichel/data-locales/master.svg?style=flat-square)](https://coveralls.io/github/thierrymichel/data-locales?branch=master)
--->
+
 ---
 
 ## How it works
