@@ -1,0 +1,9 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## 1.0.0 (2019-05-28)
+
+### Features
+
+* :tada: initial commit ([ac4edfb](https://github.com/thierrymichel/data-locales/commit/ac4edfb))
