@@ -52,6 +52,70 @@ export function parser(source: object, delimiter: string = '.'): IOutput {
   return { data, locales };
 }
 
+function writeData(
+  filepath: string,
+  filename: string,
+  json: string
+): Promise<void> {
+  return new Promise(resolve => {
+    fs.writeFile(filepath, json, err => {
+      /* istanbul ignore next */
+      if (err) {
+        throw err;
+      }
+      console.log(`📦 ${chalk.green('Data have been saved!')} [${filename}]`);
+      resolve();
+    });
+  });
+}
+
+function writeLocales(
+  filepath: string,
+  filename: string,
+  json: string
+): Promise<void> {
+  return new Promise(resolve => {
+    fs.writeFile(filepath, json, err => {
+      /* istanbul ignore next */
+      if (err) {
+        throw err;
+      }
+      console.log(
+        `💬 ${chalk.green('Locales have been saved!')} [${filename}]`
+      );
+      resolve();
+    });
+  });
+}
+
+function updateLocales(
+  filepath: string,
+  filename: string,
+  data: any
+): Promise<void> {
+  return new Promise(resolve => {
+    const locales = require(filepath);
+
+    Object.keys(data).forEach(key => {
+      /* istanbul ignore else */
+      if (locales[key] === undefined) {
+        locales[key] = data[key];
+      }
+    });
+
+    fs.writeFile(filepath, JSON.stringify(locales), err => {
+      /* istanbul ignore next */
+      if (err) {
+        throw err;
+      }
+      console.log(
+        `💬 ${chalk.green('Locales have been updated!')} [${filename}]`
+      );
+      resolve();
+    });
+  });
+}
+
 async function run({
   source = 'data.js',
   dataDir = 'data',
@@ -88,7 +152,7 @@ async function run({
     entries = await globby(source as string);
   }
 
-  entries.forEach(entry => {
+  entries.forEach(async entry => {
     const { base, name, ext } = isIterable(entry)
       ? {
           base: 'data.json',
@@ -107,38 +171,32 @@ async function run({
       ...newLocales,
     };
 
-    // Write data files
-    // TODO: check for data ? Do not write empty file ?
-    // TODO: async ?
-    fs.writeFileSync(
+    await writeData(
       path.join(dest.data, `${name}.json`),
+      base,
       JSON.stringify(data)
-      // err => {
-      //   if (err) {
-      //     throw err;
-      //   }
-      //   console.log(`📦 ${chalk.green('Data have been saved!')} [${base}]`);
-      // }
     );
-    console.log(`📦 ${chalk.green('Data have been saved!')} [${base}]`);
   });
 
-  // TODO: async?
-  fs.writeFileSync(
-    path.join(dest.locales, `${localesFile}.json`),
-    JSON.stringify(locales)
-    // err => {
-    //   if (err) {
-    //     throw err;
-    //   }
-    //   console.log(
-    //     `💬 ${chalk.green('Locales have been saved!')} [${localesFile}.json]`
-    //   );
-    // }
-  );
-  console.log(
-    `💬 ${chalk.green('Locales have been saved!')} [${localesFile}.json]`
-  );
+  // Write locales
+  // Check if existing files, then update
+  // If no locales, create one…
+  const localesPaths = await globby(`${dest.locales}/*.json`);
+  const localesData = JSON.stringify(locales);
+
+  if (localesPaths.length > 0) {
+    localesPaths.forEach(async localesPath => {
+      const { base } = path.parse(localesPath as string);
+
+      await updateLocales(localesPath, base, locales);
+    });
+  } else {
+    await writeLocales(
+      path.join(dest.locales, `${localesFile}.json`),
+      `${localesFile}.json`,
+      localesData
+    );
+  }
 }
 
 export default run;

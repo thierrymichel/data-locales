@@ -59,3 +59,19 @@ describe('run', () => {
     });
   });
 });
+
+describe('update', () => {
+  it('update existing locales', async () => {
+    fs.mkdirSync('__tests__/locales');
+    fs.writeFileSync('__tests__/locales/vl.json', '{}');
+
+    await run(options);
+
+    fs.exists('__tests__/locales/vl.json', exists => {
+      expect(exists).toBeTruthy();
+    });
+    fs.exists('__tests__/locales/locales.json', exists => {
+      expect(exists).toBeFalsy();
+    });
+  });
+});
