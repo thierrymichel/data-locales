@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/thierrymichel/data-locales/compare/v1.0.0...v1.1.0) (2019-05-29)
+
+
+### Features
+
+* :sparkles: update existing locales ([cfe0b8d](https://github.com/thierrymichel/data-locales/commit/cfe0b8d))
+
+
+
 ## 1.0.0 (2019-05-28)
 
 ### Features
