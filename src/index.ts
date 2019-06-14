@@ -103,7 +103,7 @@ function updateLocales(
       }
     });
 
-    fs.writeFile(filepath, JSON.stringify(locales), err => {
+    fs.writeFile(filepath, JSON.stringify(locales, null, 2), err => {
       /* istanbul ignore next */
       if (err) {
         throw err;
@@ -174,7 +174,7 @@ async function run({
     await writeData(
       path.join(dest.data, `${name}.json`),
       base,
-      JSON.stringify(data)
+      JSON.stringify(data, null, 2)
     );
   });
 
@@ -182,7 +182,7 @@ async function run({
   // Check if existing files, then update
   // If no locales, create one…
   const localesPaths = await globby(`${dest.locales}/*.json`);
-  const localesData = JSON.stringify(locales);
+  const localesData = JSON.stringify(locales, null, 2);
 
   if (localesPaths.length > 0) {
     localesPaths.forEach(async localesPath => {
