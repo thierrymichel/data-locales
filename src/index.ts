@@ -103,7 +103,15 @@ function updateLocales(
       }
     });
 
-    fs.writeFile(filepath, JSON.stringify(locales, null, 2), err => {
+    const sortedLocales = {};
+
+    Object.keys(locales)
+      .sort()
+      .forEach(key => {
+        sortedLocales[key] = locales[key];
+      });
+
+    fs.writeFile(filepath, JSON.stringify(sortedLocales, null, 2), err => {
       /* istanbul ignore next */
       if (err) {
         throw err;
