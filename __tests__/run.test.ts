@@ -10,16 +10,37 @@ const options = {
   localesDir: '__tests__/locales',
   localesFile: 'locales',
   source: '__tests__/entries/*.(js|json)',
+  sourceRoot: '',
 };
 
 afterEach(async () => {
   await del(['__tests__/data', '__tests__/locales', 'data', 'locales']);
 });
 
-describe('data file', () => {
+describe('data file(s)', () => {
   it('is created', async () => {
-    await run(options);
+    await run({
+      ...options,
+      source: '__tests__/entries/*.(js|json)',
+      sourceRoot: '',
+    });
     fs.exists('__tests__/data/test.json', exists => {
+      expect(exists).toBeTruthy();
+    });
+    fs.exists('__tests__/data/folder/sub.json', exists => {
+      expect(exists).toBeFalsy();
+    });
+  });
+  it('are created with root', async () => {
+    await run({
+      ...options,
+      source: '__tests__/entries/**/*.(js|json)',
+      sourceRoot: '__tests__/entries',
+    });
+    fs.exists('__tests__/data/test.json', exists => {
+      expect(exists).toBeTruthy();
+    });
+    fs.exists('__tests__/data/folder/sub.json', exists => {
       expect(exists).toBeTruthy();
     });
   });

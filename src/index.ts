@@ -1,5 +1,6 @@
 const chalk = require('chalk'); // tslint:disable-line
 import fs = require('fs');
+import fse = require('fs-extra');
 import globby = require('globby');
 import pMap = require('p-map');
 import path = require('path');
@@ -7,6 +8,7 @@ import path = require('path');
 // Definitions
 export interface IOptions {
   source?: string | object;
+  sourceRoot?: string;
   dataDir?: string;
   localesDir?: string;
   localesFile?: string;
@@ -58,7 +60,7 @@ function writeData(
   json: string
 ): Promise<void> {
   return new Promise(resolve => {
-    fs.writeFile(filepath, json, err => {
+    fse.outputFile(filepath, json, err => {
       /* istanbul ignore next */
       if (err) {
         throw err;
@@ -126,6 +128,7 @@ function updateLocales(
 
 async function run({
   source = 'data.js',
+  sourceRoot = '',
   dataDir = 'data',
   localesDir = 'locales',
   localesFile = 'locales',
@@ -161,13 +164,15 @@ async function run({
   }
 
   entries.forEach(async entry => {
-    const { base, name, ext } = isIterable(entry)
+    const { dir, base, name, ext } = isIterable(entry)
       ? {
           base: 'data.json',
+          dir: '',
           ext: 'json',
           name: 'data',
         }
       : path.parse(entry as string);
+
     const raw = isIterable(entry)
       ? entry
       : require(path.resolve(process.cwd(), entry as string));
@@ -179,9 +184,18 @@ async function run({
       ...newLocales,
     };
 
+    let filePath = `${name}.json`;
+
+    if (sourceRoot !== '' && !isIterable(entry)) {
+      // Be sure to have a trailing slash
+      const root = `${sourceRoot.replace(/\/$/, '')}/`;
+
+      filePath = (entry as string).replace(root, '').replace(/\.js$/, '.json');
+    }
+
     await writeData(
-      path.join(dest.data, `${name}.json`),
-      base,
+      path.join(dest.data, filePath),
+      filePath,
       JSON.stringify(data, null, 2)
     );
   });
